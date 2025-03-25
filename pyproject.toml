@@ -1,0 +1,16 @@
+[project]
+name = "pdf-extractor-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain",
+    "langchain-community",
+    "langchain-openai",
+    "langchain-core",
+    "langchain-chroma",
+    "langchain-ollama",
+    "jupyter",
+    "pypdf"
+]
