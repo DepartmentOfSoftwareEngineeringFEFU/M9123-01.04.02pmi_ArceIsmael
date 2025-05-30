@@ -12,5 +12,12 @@ dependencies = [
     "langchain-chroma",
     "langchain-ollama",
     "jupyter",
-    "pypdf"
+    "pypdf",
+    "pdfplumber",
+    "langgraph",
+    "langchain-huggingface",
+    "llama-index",
+    "neo4j",
+    "typer",
+    "pymupdf"
 ]
