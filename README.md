@@ -31,7 +31,7 @@ This system provides advanced medical document analysis capabilities specificall
 1. Clone the repository:
 
 ```bash
-[git clone https://github.com/ismaArce/pdf-extractor-system.git](https://github.com/DepartmentOfSoftwareEngineeringFEFU/medical-extractor-system-llm.git)
+git clone https://github.com/DepartmentOfSoftwareEngineeringFEFU/medical-extractor-system-llm.git
 cd medical-extractor-system-llm
 ```
 
