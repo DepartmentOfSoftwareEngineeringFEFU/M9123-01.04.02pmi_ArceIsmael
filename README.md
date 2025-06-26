@@ -64,14 +64,7 @@ IACPAAS_MODEL=your_iacpaas_model_name
 Основной способ использования системы — через CLI:
 
 ```bash
-# Basic PDF processing
-uv run python main.py convert path/to/document.pdf
-
-# Process PDF and export to JSON
-uv run python main.py convert path/to/document.pdf --export
-
-# Specify custom output path
-uv run python main.py convert path/to/document.pdf --export --output results.json
+uv run python main.py path/to/document.pdf --export --output results.json
 ```
 
 ### CLI Options
