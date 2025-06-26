@@ -29,7 +29,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/DepartmentOfSoftwareEngineeringFEFU/medical-extractor-system-llm.git
+git clone https://github.com/DepartmentOfSoftwareEngineeringFEFU/M9123-01.04.02pmi_ArceIsmael
 cd medical-extractor-system-llm
 ```
 
