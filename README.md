@@ -1,32 +1,30 @@
-# Medical Treatment Recommendation Extraction System
+Арсе Морено Оскар Исмаэль М9123-01.04.02пми
+Тема "ФОРМИРОВАНИЕ МЕДИЦИНСКОЙ БАЗЫ ЗНАНИЙ ПО ДИАГНОСТИКЕ ЗАБОЛЕВАНИЙ С ИСПОЛЬЗОВАНИЕМ ГЕНЕРАТИВНЫХ НЕЙРОСЕТЕВЫХ МОДЕЛЕЙ".
+Руководитель Грибова Валерия Викторовна
 
-A specialized academic research system for extracting and analyzing medical treatment recommendations from PDF documents using RAG (Retrieval Augmented Generation) techniques with statistically rigorous evaluation frameworks and structured JSON export capabilities.
+# Система извлечения медицинских рекомендаций
 
-## Overview
+Академическая система для анализа и извлечения медицинских рекомендаций из PDF-документов. Использует RAG-подход (Retrieval Augmented Generation), фреймворк для строгой статистической оценки и экспорт данных в структурированный JSON.
 
-This system provides advanced medical document analysis capabilities specifically designed for extracting treatment recommendations from Russian medical clinical guidelines. It leverages multiple AI models, sophisticated text processing techniques, and comprehensive evaluation frameworks to extract structured medical information with statistical confidence intervals. The system is optimized for academic research in medical informatics, featuring ontological data extraction, treatment section detection, and robust evaluation methodologies for medical recommendation systems.
 
-## Features
+## Ключевые возможности
 
-- **PDF Processing**: Extract and analyze text from PDF documents with intelligent chunking
-- **RAG Integration**: Retrieval Augmented Generation using LangChain and vector stores
-- **Subsection Detection**: Automatic identification and extraction of document subsections
-- **JSON Export**: Convert processed PDF data to structured JSON format
-- **CLI Interface**: Command-line tool for batch processing and automation
-- **Medical Text Analysis**: Specialized prompts for medical document processing
-- **Multiple LLM Support**: Compatible with OpenAI, Ollama, and Hugging Face models
-- **Evaluation System**: Comprehensive evaluation scripts for ontology and treatment extraction with statistical analysis
-- **PDF Corruption Detection**: Enhanced error handling for corrupted or invalid PDF files
-- **Semantic Similarity Analysis**: Advanced evaluation using multilingual embeddings and confidence intervals
+- Обработка PDF: Извлечение текста, интеллектуальная разбивка на части и определение разделов.
+- Интеграция RAG: Использование LangChain и векторных баз данных для извлечения информации.
+- Экспорт в JSON: Преобразование обработанных данных в структурированный формат.
+- Интерфейс командной строки (CLI): Утилита для пакетной обработки файлов.
+- Поддержка LLM: Совместимость с моделями OpenAI, Ollama и Hugging Face.
+- Система оценки: Скрипты для оценки качества извлечения онтологий и рекомендаций со статистическим анализом.
+- Анализ семантической схожести: Оценка с использованием многоязычных эмбеддингов.
 
-## Prerequisites
+## Требования
 
 - Python 3.11 or higher
 - UV package manager
 - OpenAI API key (for OpenAI models only)
 - IACPAAS API credentials (for IACPAAS models)
 
-## Installation
+## Установка
 
 1. Clone the repository:
 
@@ -49,46 +47,21 @@ IACPAAS_TOKEN=your_iacpaas_token_here
 IACPAAS_MODEL=your_iacpaas_model_name
 ```
 
-## Architecture
+## Архитектура
 
-The system is organized into several key components:
+Система имеет модульную структуру, включающую компоненты для:
 
-### Core Components
+    Обработки PDF и текста (PDFProcessor, handlers).
+    Интеграции с LLM (LLMClient, LangChainWrapper).
+    Оценки качества (OntologyEvaluator и скрипты оценки).
 
-- **`main.py`**: CLI application using Typer for PDF to JSON conversion
-- **`utils/pdf_processor.py`**: PDFProcessor class for document loading and text extraction with corruption detection
-- **`utils/llm_client.py`**: LLM integration with LangChainWrapper and LLMClient classes
-- **`utils/handlers.py`**: Text processing utilities for section extraction and manipulation
-- **`utils/prompts.py`**: Specialized prompts for medical and technical document analysis
-- **`utils/ontology_evaluator.py`**: Statistical evaluation system for medical recommendation extraction
-- **`evaluate_ontology_llm.py`**: Evaluation script for ontology extraction
-- **`evaluate_treatment_extraction.py`**: Comprehensive evaluation system for treatment section detection
+Ключевые зависимости: LangChain, PDFPlumber/PyMuPDF, Typer, Chroma, scikit-learn, sentence-transformers.
 
-### Key Dependencies
+## Использование
 
-- **LangChain**: RAG implementation and LLM orchestration
-- **PDFPlumber/PyMuPDF**: PDF text extraction and processing
-- **Typer**: CLI interface and command handling
-- **Chroma**: Vector database for document retrieval
-- **Jupyter**: Interactive development and examples
-- **NLP Libraries**:
-  - `sentence-transformers`: Semantic similarity analysis
-  - `transformers`: Multilingual BERT models for Russian text
-  - `spacy`: Advanced NLP with Russian language support
-  - `nltk`: Natural language processing
-  - `pymorphy3`: Russian morphological analysis
-- **Statistical Analysis**:
-  - `scikit-learn`: Machine learning metrics and statistical tests
-  - `scipy`: Statistical significance testing
-  - `statsmodels`: Advanced statistical modeling
-  - `pingouin`: Statistical functions with effect sizes
-  - `evaluate`: Hugging Face evaluation library
+### CLI
 
-## Usage
-
-### Command Line Interface
-
-The primary way to use the system is through the CLI:
+Основной способ использования системы — через CLI:
 
 ```bash
 # Basic PDF processing
@@ -103,336 +76,36 @@ python main.py convert path/to/document.pdf --export --output results.json
 
 ### CLI Options
 
-- `pdf_path`: Path to the PDF file to process (required)
-- `--export, -e`: Export processed data to JSON file
-- `--output, -o`: Specify custom output path (defaults to PDF name with .json extension)
+- `pdf_path`: Путь к PDF-файлу для обработки (обязательно)
+- `--export, -e`: Экспорт обработанных данных в файл JSON
+- `--output, -o`: Укажите пользовательский выходной путь (по умолчанию — имя PDF-файла с расширением .json)
 
-### Programmatic Usage
 
-You can also use the system programmatically:
+## Фреймворк оценки
 
-```python
-from utils.pdf_processor import PDFProcessor
-from utils.llm_client import LangChainWrapper
+Система включает мощный фреймворк для оценки двух ключевых аспектов:
 
-# Initialize components
-pdf_processor = PDFProcessor("document.pdf")
-llm_client = LangChainWrapper()
+    Извлечение онтологии: Оценивает, насколько точно модель извлекает структурированные данные (условия, параметры).
+    Определение разделов с лечением: Проверяет, правильно ли система находит в документе раздел "Лечение" и его подразделы.
 
-# Process document
-splits = pdf_processor.split_documents()
-llm_client.create_rag_chain(splits)
-results = llm_client.query_rag_chain()
-```
+Для запуска оценки необходимо подготовить датасет в формате JSON с эталонной разметкой.
 
-### Jupyter Notebook Examples
-
-The project includes interactive examples in the `examples/` directory:
-
-- `examples/simple_RAG.ipynb`: Basic RAG implementation demonstration
-
-## Evaluation Framework
-
-The system includes a comprehensive evaluation framework for assessing the performance of medical text extraction. The framework supports two main evaluation types: ontology extraction and treatment section detection.
-
-### Dataset Preparation
-
-Before running evaluations, prepare your validation dataset in JSON format:
-
-#### Ontology Evaluation Dataset Format
-
-```json
-[
-  {
-    "text": "Medical text containing recommendations...",
-    "data": [
-      {
-        "precursor": "medical treatment/intervention",
-        "condition_type": [
-          {
-            "criteria": [
-              {
-                "name": "parameter name",
-                "criterion": {
-                  "value": "exact value",
-                  "min_value": 5,
-                  "max_value": 10,
-                  "unit_of_measurement": "mg",
-                  "condition": "additional condition"
-                }
-              }
-            ],
-            "selection_rule": "ALL"
-          }
-        ]
-      }
-    ]
-  }
-]
-```
-
-#### Treatment Extraction Dataset Format
-
-```json
-[
-  {
-    "pdf_path": "path/to/document.pdf",
-    "ground_truth": {
-      "has_treatment": true,
-      "treatment_name": "5. Лечение",
-      "subsections": ["5.1 Консервативное лечение", "5.2 Хирургическое лечение"]
-    }
-  }
-]
-```
-
-### Running Ontology Evaluation
-
-#### Basic Evaluation
-
+Пример запуска оценки:
 ```bash
-# Evaluate with IACPAAS model
+# Оценить модель на датасете для извлечения онтологии
 python evaluate_ontology_llm.py evaluate-ontology-model data/validation_50.json
-
-# Evaluate with OpenAI model
-python evaluate_ontology_llm.py evaluate-ontology-model data/validation_50.json \
-  --llm-provider openai \
-  --openai-model gpt-4o-mini
 ```
 
-#### Advanced Configuration
+Метрики оценки:
 
-```bash
-# Custom evaluation with specific parameters
-python evaluate_ontology_llm.py evaluate-ontology-model data/validation_50.json \
-  --model-name my_experiment \
-  --max-samples 100 \
-  --temperature 0.01 \
-  --confidence-level 0.95 \
-  --bootstrap-iterations 1000 \
-  --semantic-model "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-```
+- Онтология: Семантическая схожесть (косинусное расстояние), точность (precision), полнота (recall) и F1-мера с 95% доверительными интервалами.
+- Разделы лечения: Точность классификации и точность извлечения названий разделов.
 
-#### Single Sample Testing
+Формат вывода
 
-```bash
-# Test specific sample for debugging
-python evaluate_ontology_llm.py test-ontology-single data/validation_50.json \
-  --sample-index 0 \
-  --llm-provider openai \
-  --openai-model gpt-4o-mini
-```
+Результат работы системы сохраняется в JSON-файл, содержащий структуру документа с выделенными разделами, общими условиями и извлеченными рекомендациями.
+Особенности для научных исследований
 
-### Running Treatment Extraction Evaluation
-
-#### LangChain Wrapper Evaluation
-
-```bash
-# Basic evaluation with default LangChain wrapper
-python evaluate_treatment_extraction.py evaluate-langchain data/treatment_dataset.json
-
-# Custom parameters
-python evaluate_treatment_extraction.py evaluate-langchain data/treatment_dataset.json \
-  --max-samples 25 \
-  --temperature 0.0 \
-  --case-sensitive
-```
-
-#### Multi-Model OpenAI Evaluation
-
-```bash
-# Compare multiple OpenAI models
-python evaluate_treatment_extraction.py evaluate-openai-models data/treatment_dataset.json \
-  --models "gpt-4o,gpt-4o-mini,gpt-3.5-turbo" \
-  --max-samples 50 \
-  --output-dir ./results
-```
-
-#### Debugging Individual Samples
-
-```bash
-# Debug specific sample
-python evaluate_treatment_extraction.py debug-single data/treatment_dataset.json \
-  --sample-index 0
-
-# Debug with specific PDF
-python evaluate_treatment_extraction.py debug-single-pdf path/to/document.pdf \
-  --expected-treatment "5. Лечение" \
-  --expected-subsections "5.1 Консервативное лечение,5.2 Хирургическое лечение"
-```
-
-### Understanding Evaluation Results
-
-#### Ontology Evaluation Metrics
-
-The ontology evaluator provides comprehensive statistical analysis:
-
-- **Semantic Similarity**: Cosine similarity using multilingual embeddings
-- **Condition Extraction**: Precision, recall, and F1-score for condition matching
-- **Statistical Confidence**: Bootstrap confidence intervals for robust statistics
-
-Example output:
-
-```
-📊 ONTOLOGY EVALUATION RESULTS
-═══════════════════════════════════════
-Model: gpt-4o-mini_openai
-Samples: 50/50 successful
-
-🎯 SEMANTIC SIMILARITY
-Mean: 0.756 (95% CI: 0.721-0.791)
-Median: 0.782
-Standard Deviation: 0.134
-
-🔍 CONDITION EXTRACTION
-Precision: 0.847 ± 0.023
-Recall: 0.789 ± 0.031
-F1-Score: 0.817 ± 0.025
-
-📋 TEXT GROUNDING
-Grounding Rate: 94.2%
-```
-
-#### Treatment Extraction Metrics
-
-The treatment evaluator focuses on section detection and extraction:
-
-- **Treatment Detection**: Binary classification accuracy
-- **Name Extraction**: Exact match rate for treatment section names
-- **Subsection Extraction**: Precision/recall for subsection identification
-- **Overall Performance**: Combined accuracy across all tasks
-
-Example output:
-
-```
-📊 TREATMENT EXTRACTION RESULTS
-════════════════════════════════════════
-Model: langchain_gpt4o
-Total Samples: 25
-
-🎯 TREATMENT DETECTION
-Accuracy: 0.920
-Precision: 0.958
-Recall: 0.884
-F1-Score: 0.920
-
-📝 TREATMENT NAME EXTRACTION
-Exact Match Rate: 0.840
-Precision: 0.913
-Recall: 0.913
-
-🔍 SUBSECTION EXTRACTION
-Exact Match Rate: 0.760
-Precision: 0.856
-Recall: 0.798
-
-📊 OVERALL PERFORMANCE
-Overall Accuracy: 0.720
-Success Rate: 0.960
-```
-
-### Evaluation Best Practices
-
-#### Dataset Quality
-
-- Ensure ground truth annotations are accurate and consistent
-- Include diverse examples covering different document types
-- Validate PDF accessibility and text extraction quality
-
-#### Statistical Significance
-
-- Use adequate sample sizes (recommended: 50+ samples)
-- Set appropriate confidence levels (default: 95%)
-- Consider bootstrap iterations for robust statistics (1000+ recommended)
-
-#### Model Comparison
-
-- Use identical datasets across different models
-- Control for temperature and other hyperparameters
-- Document evaluation conditions for reproducibility
-
-#### Error Analysis
-
-- Review failed extractions for pattern identification
-- Check PDF corruption issues using built-in detection
-- Analyze semantic similarity distributions for insights
-
-### Interpreting Confidence Intervals
-
-The evaluation framework provides statistical confidence intervals:
-
-- **Narrow intervals** (±0.01-0.03): High confidence in performance estimate
-- **Wide intervals** (±0.05+): Consider increasing sample size or checking data quality
-- **Non-overlapping intervals**: Statistically significant difference between models
-
-### Troubleshooting Evaluation Issues
-
-#### Common Problems
-
-1. **PDF Corruption**: Use built-in corruption detection
-2. **API Rate Limits**: Adjust delays between requests
-3. **Memory Issues**: Reduce batch sizes or sample counts
-4. **JSON Parsing Errors**: Enable debug mode for detailed error analysis
-
-## Processing Workflow
-
-1. **PDF Loading**: Load and extract text from PDF documents with corruption detection
-2. **Section Detection**: Identify document structure and subsections
-3. **Text Chunking**: Split text into manageable chunks for processing
-4. **RAG Processing**: Create vector embeddings and perform retrieval
-5. **Content Extraction**: Extract specific information using specialized prompts
-6. **Structured Output**: Generate JSON with extracted recommendations and metadata
-7. **Evaluation**: Statistical analysis and performance metrics (optional)
-
-## Output Format
-
-The system generates structured JSON output with the following format:
-
-```json
-{
-  "pdf_name": "document_name",
-  "nodes": [
-    {
-      "subsection": "Section Title",
-      "subsection_text": "Full section content...",
-      "general_condition": "Extracted conditions...",
-      "recommendations": [
-        {
-          "recommendation": "Specific recommendation text",
-          "condition": {
-            "structured_data": "extracted_information"
-          }
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Configuration
-
-The system can be configured through environment variables:
-
-- `OPENAI_API_KEY`: Your OpenAI API key for GPT models
-- `IACPAAS_TOKEN`: API token for IACPAAS models
-- `IACPAAS_MODEL`: Model name for IACPAAS (e.g., "llama-3.3-70b")
-- Additional model-specific configurations can be set in the respective client classes
-
-## Error Handling
-
-The system includes robust error handling for:
-
-- **PDF Corruption**: Automatic detection and graceful handling of corrupted PDF files
-- **Network Issues**: Retry logic for API calls with exponential backoff
-- **JSON Parsing**: Validation and cleaning of LLM responses
-- **Missing Dependencies**: Clear error messages for missing requirements
-
-## Academic Research Features
-
-This system is designed for academic research with:
-
-- **Reproducible Results**: Fixed random seeds and deterministic evaluation
-- **Statistical Significance**: Confidence intervals and significance testing
-- **Detailed Logging**: Comprehensive logs for debugging and analysis
-- **Benchmark Datasets**: Support for standardized evaluation datasets
-- **Academic Metrics**: Standard NLP evaluation metrics and custom medical domain metrics
+- Воспроизводимость
+- Статистическая значимость
+- Детальное логирование
