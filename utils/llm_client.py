@@ -3,6 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import requests
+import json
 from utils.prompts import system_prompt, rag_prompt
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
@@ -11,6 +12,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import os
 import tiktoken
+import openai
 
 
 class LangChainWrapper:
@@ -80,9 +82,20 @@ class LangChainWrapper:
 
 
 class LLMClient:
-    def __init__(self, base_url: str = "https://llm.iacpass.dvo.ru"):
+    def __init__(self, base_url: str = "https://llm.iacpaas.dvo.ru/api/inference"):
+
+        try:
+            load_dotenv()
+            self.api_token = os.getenv("IACPAAS_TOKEN")
+            self.model_name = os.getenv("IACPAAS_MODEL")
+        except Exception as e:
+            print(f"Error loading IACPAAS API key: {str(e)}")
+            raise
+
         self.base_url = base_url
-        self.headers = {"Content-Type": "application/json"}
+        self.headers = {
+            "Content-Type": "application/json",
+        }
 
     def query_llm(
         self,
@@ -92,6 +105,8 @@ class LLMClient:
         max_tokens: int = 3000,
     ):
         payload = {
+            "auth_token": self.api_token,
+            "model_name": self.model_name,
             "conversation": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -105,13 +120,79 @@ class LLMClient:
             },
         }
 
-        api_url = "https://llm.iacpaas.dvo.ru/inference"
+        try:
+            # Debug: Log payload size and first part of content
+            print(f"🔍 IACPAAS DEBUG: Payload size: {len(str(payload))} chars")
+            print(f"🔍 IACPAAS DEBUG: User prompt size: {len(user_prompt)} chars")
+            print(f"🔍 IACPAAS DEBUG: User prompt preview: {user_prompt[:200]}...")
 
-        response = requests.get(
-            api_url,
-            json=payload,
-        )
+            response = requests.get(
+                self.base_url,
+                json=payload,
+            )
 
-        response.raise_for_status()
+            print(f"🔍 IACPAAS DEBUG: Response status: {response.status_code}")
 
-        return response.json()["output"]
+            if response.status_code != 200:
+                print(f"🔍 IACPAAS DEBUG: Response text: {response.text}")
+
+            response.raise_for_status()
+
+            try:
+                response_data = response.json()
+                return response_data["output"]
+            except json.JSONDecodeError as e:
+                print(f"❌ IACPAAS JSON parsing error: {str(e)}")
+                print(f"❌ Raw response content: {response.text[:500]}...")
+                raise Exception(f"Failed to parse IACPAAS response as JSON: {str(e)}")
+
+        except requests.exceptions.RequestException as e:
+            print(f"❌ IACPAAS Request Error: {str(e)}")
+            if hasattr(e, "response") and e.response is not None:
+                print(f"❌ Response content: {e.response.text}")
+            raise
+        except Exception as e:
+            print(f"❌ IACPAAS General Error: {str(e)}")
+            raise
+
+
+class OpenAIClient:
+    """OpenAI API client for comparison testing"""
+
+    def __init__(self, model: str = "gpt-4o-mini"):
+        load_dotenv()
+
+        # Check for required environment variables
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+
+        self.client = openai.OpenAI(api_key=api_key)
+        self.model = model
+
+    def query_llm(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float = 0.01,
+        max_tokens: int = 3000,
+    ):
+        """Query OpenAI with the same interface as LLMClient"""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=temperature,
+                max_tokens=max_tokens,
+                response_format=(
+                    {"type": "json_object"} if "json" in user_prompt.lower() else {"type": "text"}
+                ),
+            )
+
+            return response.choices[0].message.content
+
+        except Exception as e:
+            raise Exception(f"OpenAI API error: {str(e)}")

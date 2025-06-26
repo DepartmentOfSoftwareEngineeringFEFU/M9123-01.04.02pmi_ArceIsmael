@@ -14,26 +14,74 @@ Context:
 {context}"""
 
 
-rag_prompt = "what heading indicates the start of the treatment 'лечение' section? If no heading that explicitly refers to a treatment section is found, state that no treatment heading was identified in the text."
+rag_prompt = "Find the section heading that contains 'Лечение' (treatment). Look for patterns like '3. Лечение' or similar numbered sections about treatment. Return the exact heading text. If no such heading is found, state that no treatment heading was identified in the text."
 
 
 template_for_subsection_extraction = """
-You are a specialized AI assistant focused on providing accurate, context-based answers.
-Examine the text below and extract all numbered subsections that match the format "<section_number>.<number>. <heading>" or "<section_number>.<number> <heading>"
-If you cannot find any subsections in any of those formats, respond with 'not found'.
+You are a specialized AI assistant focused on extracting LEVEL 2 subsections from medical treatment documents.
+
+TASK: Extract ONLY subsection HEADERS/TITLES that match these formats:
+- "<section_number>.<number>. <heading>" (e.g., "5.1. ЭТИОТРОПНОЕ ЛЕЧЕНИЕ")
+- "<section_number>.<number> <heading>" (e.g., "5.2 ПАТОГЕНЕТИЧЕСКОЕ ЛЕЧЕНИЕ")
+
+CRITICAL RULES:
+1. ONLY extract LEVEL 2 subsections (X.Y format), NOT nested subsections (X.Y.Z format)
+2. SUBSECTION HEADERS are typically:
+   - Short titles (usually under 100 characters)
+   - Often in UPPERCASE or Title Case
+   - Followed by content, not continuing as a sentence
+3. DO NOT extract:
+   - Numbered recommendations or sentences
+   - Nested subsections like "3.1.1", "3.1.2", "5.2.1", etc.
+   - Long descriptive text or paragraphs
+4. Look for patterns like "3.1", "3.2", "5.1", "5.2" followed by SHORT TITLES
+
+EXAMPLES OF WHAT TO EXTRACT:
+✅ "5.1. ЭТИОТРОПНОЕ ЛЕЧЕНИЕ"
+✅ "5.10. ПОРЯДОК ВЫПИСКИ (ПЕРЕВОДА) ПАЦИЕНТОВ"
+✅ "3.2 Хирургическое лечение"
+
+EXAMPLES OF WHAT NOT TO EXTRACT:
+❌ "3.1.1 Малоинвазивные методы лечения" (nested subsection)
+❌ "3.2.2 Оперативное лечение" (nested subsection)
+❌ "6. Для пациентов с ХБП характерно более быстрое развитием ОРДС..." (sentence)
+❌ Any numbered sentences or recommendations
 
 Previous context: {previous_context}
-If a previous subsection was found, look for the next logical subsection number. For example:
-- If previous was "5.1.", look for "5.2."
-- If previous was "3.2", look for "3.3"
+
+If you cannot find ANY level 2 subsection headers in the specified formats, respond with 'not found'.
 
 Text to analyze:
 {text}
 """
 
 prompt_for_second_marker_extraction = (
-    "what section follows after '{start_marker}' ends?, do not consider subsections."
+    "Find the next main section heading that comes after '{start_marker}' in the document. "
+    "Look for numbered sections like '4. Медицинская реабилитация', '5. Профилактика', '6. Организация', etc. "
+    "Return only the exact heading text. Do not consider subsections (like 3.1, 3.2). "
+    "If no clear next section is found, return 'No next section found'."
 )
+
+# IACPAAS-specific prompt - enhanced for better detection
+iacpaas_subsection_prompt = """Extract ALL subsection headers from this medical text.
+
+Look for numbered subsection patterns:
+- X.Y TITLE (like "3.1 Консервативное лечение")
+- X.Y. TITLE (like "3.2. Лазерное лечение")  
+- X.Y TITLE (like "5.1 ЭТИОТРОПНОЕ ЛЕЧЕНИЕ")
+
+IMPORTANT:
+- Only extract level 2 subsections (X.Y format, not X.Y.Z)
+- Include the complete title after the number
+- Look throughout the entire text, including middle and end sections
+- Each subsection should be on a new line
+- If the text starts mid-sentence, look for subsection headers that may appear later
+
+If no subsections are found, return exactly: not found
+
+Text:
+{text}
+"""
 
 # template_for_recomendation_extraction = """
 # You are a specialized AI assistant focused on providing accurate, context-based answers.
@@ -189,16 +237,4 @@ adapter_user_prompt = """
 
 Текст:
 {text}
-"""
-
-adapter_user_prompt_2 = """
-О каком заболевании или состоянии здоровья идет речь в следующем тексте?
-
-Текст:
-{text}
-
-Ответь в формате json:
-{{
-    "disease_name": "some disease name"
-}}
 """
