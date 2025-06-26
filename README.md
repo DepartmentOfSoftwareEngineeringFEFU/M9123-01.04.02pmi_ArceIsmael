@@ -30,7 +30,7 @@
 
 ```bash
 git clone https://github.com/DepartmentOfSoftwareEngineeringFEFU/M9123-01.04.02pmi_ArceIsmael
-cd medical-extractor-system-llm
+cd M9123-01.04.02pmi_ArceIsmael
 ```
 
 2. Install dependencies using UV:
