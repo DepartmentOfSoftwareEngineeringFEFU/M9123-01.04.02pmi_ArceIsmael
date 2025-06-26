@@ -65,13 +65,13 @@ IACPAAS_MODEL=your_iacpaas_model_name
 
 ```bash
 # Basic PDF processing
-python main.py convert path/to/document.pdf
+uv run python main.py convert path/to/document.pdf
 
 # Process PDF and export to JSON
-python main.py convert path/to/document.pdf --export
+uv run python main.py convert path/to/document.pdf --export
 
 # Specify custom output path
-python main.py convert path/to/document.pdf --export --output results.json
+uv run python main.py convert path/to/document.pdf --export --output results.json
 ```
 
 ### CLI Options
@@ -93,7 +93,7 @@ python main.py convert path/to/document.pdf --export --output results.json
 Пример запуска оценки:
 ```bash
 # Оценить модель на датасете для извлечения онтологии
-python evaluate_ontology_llm.py evaluate-ontology-model data/validation_50.json
+uv run python evaluate_ontology_llm.py evaluate-ontology-model data/validation_50.json
 ```
 
 Метрики оценки:
